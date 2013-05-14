@@ -3,6 +3,7 @@ from scrapy.http import Request
 from scrapy.selector import HtmlXPathSelector
 from asfmailspider.items import asfproject,listmbox
 from scrapy.conf import settings
+import datetime
 
 class ASFSpider(BaseSpider):
     name = "asf"
@@ -36,13 +37,14 @@ class ASFSpider(BaseSpider):
         item = response.meta['item']
         ml = response.meta['ml']
         print ml
-        tmp={}
+        tmp=[]
         pml = listmbox()
         for index, td in enumerate(table):
             if td.select('./td[contains(@class,"date")]/text()').extract() != []:
                 dates = td.select('./td[contains(@class,"date")]/text()').extract()
                 msgcount = td.select('./td[contains(@class,"msgcount")]/text()').extract() 
-                tmp[dates[0]]=msgcount[0]
+                #tmp.append((dates[0],msgcount[0]))
+                tmp.append((datetime.datetime.strptime(dates[0],"%b %Y"),msgcount[0]))
                 pml['datatime']=tmp
                 pml['ml']=ml
                 print dates, msgcount 
