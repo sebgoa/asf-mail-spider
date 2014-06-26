@@ -30,28 +30,40 @@ def main():
     except:
         print "Generate items.json file"
     foobar=json.loads(fh.read())	
-    
-    fig = plt.figure(1)
-    ax=fig.add_subplot(111)
+
+    projects = []
 
     for f in foobar:
-        if 'ml' in f.keys():
-           print f['ml']
-           count=[]
-           datapoint=[]
-           for d in f['datatime']:
-               datapoint.append(datetime.datetime.strptime(str(d[0]),'%Y-%m-%d %H:%M:%S'))
-               count.append(int(d[1]))
-           p=ax.plot(datapoint,count,label=f['ml'])  
+        if 'project' in f.keys():
+            projects.append(f['project'][0])    
+    print projects
+
+    plt.ion()
+
+    for p in projects:
+        
+        fig = plt.figure()
+        #ax=fig.add_subplot()
+
+        for f in foobar:
+            if ('ml' in f.keys()) and (f['ml'].split('-')[0] == p):
+                count=[]
+                datapoint=[]
+                for d in f['datatime']:
+                    datapoint.append(datetime.datetime.strptime(str(d[0]),'%Y-%m-%d %H:%M:%S'))
+                    count.append(int(d[1]))
+                plt.plot(datapoint,count,label=f['ml'])  
    
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%y'))
-    fig.autofmt_xdate()
-    plt.title('Mail Messages')
-    plt.legend(loc=2)
-    plt.xlabel('Time')
-    plt.ylabel('Count')
-    plt.grid(True)
-    plt.show()
+        #ax.xaxis.set_major_formatter(mdates.DateFormatter('%m-%y'))
+                fig.autofmt_xdate()
+                plt.title('Mail Messages for ' + p.upper())
+                plt.legend(loc=2)
+                plt.xlabel('Time')
+                plt.ylabel('Count')
+                plt.grid(True)
+                plt.show()
+        raw_input("Press a key")
+        plt.close()
 
 if __name__ == '__main__':
 	main()
