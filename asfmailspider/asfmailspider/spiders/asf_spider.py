@@ -34,8 +34,21 @@ class ASFSpider(BaseSpider):
     def parse(self, response):
         hxs = HtmlXPathSelector(response)
         projects = hxs.select('//li')
+        print self.project
         for index, list in enumerate(projects):
             if (list.select('./h3') != []) and (str(list.select('./h3/a/@name').extract()[0]) in self.project):
+                item = asfproject()
+                item['project'] = list.select('./h3/a/@name').extract()
+                item['list'] = list.select('.//li/a/text()').extract()
+                item['link']= list.select('.//li/a/@href').extract()
+                print item['project'], item['list'], item['link']
+                for i in range(len(item['link'])):
+	            request = Request(url=response.request.url+item['link'][i], callback=self.parse_item)
+                    request.meta['item']=item
+                    request.meta['ml']=item['link'][i]
+                    yield request
+                    continue
+            elif (self.project == []):
                 item = asfproject()
                 item['project'] = list.select('./h3/a/@name').extract()
                 item['list'] = list.select('.//li/a/text()').extract()

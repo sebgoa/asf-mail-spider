@@ -29,7 +29,6 @@ class DuplicatesPipeline(object):
 
     def process_item(self, item, spider):
         print item.keys()
-        print "Hey"
         if 'project' in item.keys():
             if str(item['project'][0]) in self.ids_seen:
                 raise DropItem("Duplicate item found: %s" % item)
